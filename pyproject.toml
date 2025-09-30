@@ -1,32 +1,57 @@
-[tool.poetry]
+[project]
 name = "django-mediastorage"
-version = "0.1.0"
 description = ""
-authors = ["alissa <alissa.gerhard@jonasundderwolf.de>"]
+authors = [
+  { name = "Jonas und der Wolf GmbH", email = "opensource@jonasundderwolf.de" },
+  { name = "Alissa Gerhard", email = "alissa.gerhard@jonasundderwolf.de" },
+]
+requires-python = ">=3.12"
 readme = "README.md"
+keywords = [
+    "django",
+    "mediastorage",
+]
+classifiers = [
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5",
+    "Framework :: Django :: 5.0",
+    "Framework :: Django :: 5.1",
+    "Framework :: Django :: 5.2",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "django>=4.2",
+    "djangorestframework>=3.15",
+]
+dynamic = ["version"]
+license = "LGPL-2.1-or-later"
 
-[tool.poetry.dependencies]
-python = ">=3.12"
-django = ">=4.2"
-djangorestframework = ">=3.15"
-
-[tool.poetry.group.test]
-optional = true
-
-[tool.poetry.group.test.dependencies]
-pytest = "*"
-pytest-factoryboy = "*"
-pytest-django = "*"
-
-[tool.poetry.group.dev]
-optional = true
-
-[tool.poetry.group.dev.dependencies]
-pre-commit = "*"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools", "setuptools_scm[toml]"]
+build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+test = [
+    "pytest",
+    "pytest-factoryboy",
+    "pytest-django",
+]
+dev = ["pre-commit"]
+
+[tool.uv]
+default-groups = [
+    "test",
+    "dev",
+]
 
 [tool.ruff]
 line-length = 90
@@ -61,3 +86,12 @@ section-order = [
 
 [tool.ruff.lint.mccabe]
 max-complexity = 9
+
+[tool.setuptools.packages.find]
+include = ["django_mediastorage*"]
+exclude = [".venv", "tests/*", "*/tests/*"]
+
+[tool.setuptools_scm]
+tag_regex = "^v(?P<version>.*)$"        # 1
+write_to = "django_mediastorage/_version.py"  # 2
+local_scheme = "no-local-version"
