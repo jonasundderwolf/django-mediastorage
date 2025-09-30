@@ -7,7 +7,7 @@ from django.urls import URLPattern
 from rest_framework.permissions import BasePermission
 
 from ..constants import ProtectionClass
-from ..views.files import BasicFileView
+from ..views.files import BaseFileView
 from ..views.generator import generate_view_class
 from .storage import ProtectedStorage, PublicStorage, inventory
 
@@ -58,7 +58,7 @@ class ProtectedStorageMixin:
     permission_classes:
         Role Restriction to use when generating a view. Cannot be used together with
         'view'. Must be used together with 'generate_view'.
-    register_generated_view_in_media:
+    register_generated_view_urlpattern:
         when generating a view, set REGISTER_IN_GENERAL_MEDIA_PATH to this value. Cannot
         be used together with 'view'. Must be used together with 'generate_view'.
     """
@@ -66,10 +66,10 @@ class ProtectedStorageMixin:
     def __init__(
         self,
         protection_class: ProtectionClass = ProtectionClass.CONFIDENTIAL,
-        view: Optional[Union[str, type[BasicFileView]]] = None,
+        view: Optional[Union[str, type[BaseFileView]]] = None,
         generate_view: bool = False,
         permission_classes: Optional[Iterable[type[BasePermission]]] = None,
-        register_generated_view_in_general_media_path: Optional[bool] = None,
+        register_generated_view_urlpattern: Optional[bool] = None,
         **kwargs,
     ):
         protection_class = ProtectionClass(protection_class)
@@ -80,9 +80,7 @@ class ProtectedStorageMixin:
         self._view = view
         self._generate_view = generate_view
         self._permission_classes = permission_classes
-        self._register_generated_view_in_general_media_path = (
-            register_generated_view_in_general_media_path
-        )
+        self._register_generated_view_urlpattern = register_generated_view_urlpattern
 
         if "storage" not in kwargs:
             if protection_class == ProtectionClass.PUBLIC:
@@ -105,7 +103,7 @@ class ProtectedStorageMixin:
                 "view": self._view,
                 "generate_view": self._generate_view,
                 "permission_classes": self._permission_classes,
-                "register_generated_view_in_general_media_path": self._register_generated_view_in_general_media_path,
+                "register_generated_view_urlpattern": self._register_generated_view_urlpattern,
             }
         )
         del kwargs["storage"]
@@ -137,12 +135,12 @@ class ProtectedStorageMixin:
 
         if (
             not self._generate_view
-            and self._register_generated_view_in_general_media_path is not None
+            and self._register_generated_view_urlpattern is not None
         ):
             errors.append(
                 checks.Error(
-                    "register_generated_view_in_media can only be specified when generating a view",
-                    hint="You need to either unset register_generated_view_in_media or set generate_view=True",
+                    "register_generated_view_urlpattern can only be specified when generating a view",
+                    hint="You need to either unset register_generated_view_urlpattern or set generate_view=True",
                     obj=self,
                     id="django_mediastorage.ProtectedStorage.E003",
                 )
@@ -159,10 +157,7 @@ class ProtectedStorageMixin:
                 )
             )
 
-        if (
-            self.is_public
-            and self._register_generated_view_in_general_media_path is not None
-        ):
+        if self.is_public and self._register_generated_view_urlpattern is not None:
             errors.append(
                 checks.Error(
                     "Cannot register public files to media path",
@@ -202,7 +197,7 @@ class ProtectedStorageMixin:
         return _clean_upload_to_path(self._upload_to)
 
     @property
-    def _view_from_inventory(self) -> Optional[type[BasicFileView]]:
+    def _view_from_inventory(self) -> Optional[type[BaseFileView]]:
         existing_record = inventory.get_matching_record(self._upload_to_clean)
         if existing_record is None:
             return None
@@ -212,9 +207,7 @@ class ProtectedStorageMixin:
         super().contribute_to_class(model, field_name)
 
         permission_classes = self._permission_classes
-        register_generated_view_in_general_media_path = (
-            self._register_generated_view_in_general_media_path
-        )
+        register_generated_view_urlpattern = self._register_generated_view_urlpattern
 
         if self._generate_view:
             view = generate_view_class(
@@ -225,7 +218,7 @@ class ProtectedStorageMixin:
                 is_public=self.is_public,
                 upload_to=self._upload_to_clean,
                 permission_classes=permission_classes,
-                register_in_general_media_path=register_generated_view_in_general_media_path,
+                register_urlpattern=register_generated_view_urlpattern,
             )
         else:
             view = self._view
@@ -238,7 +231,7 @@ class ProtectedStorageMixin:
             view_ref=view,
         )
 
-    def get_view(self) -> Optional[type[BasicFileView]]:
+    def get_view(self) -> Optional[type[BaseFileView]]:
         return self._record.view
 
     def url_pattern(self, url_prefix: str) -> URLPattern:

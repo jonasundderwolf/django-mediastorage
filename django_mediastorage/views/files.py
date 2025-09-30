@@ -13,7 +13,7 @@ from .. import settings as mediastorage_settings
 from ..response import build_file_response
 
 
-class BasicFileView(View):
+class BaseFileView(View):
     """
     A view that returns files, using django_mediastorage.response.build_file_response.
 
@@ -47,7 +47,7 @@ class BasicFileView(View):
     Attributes
     ----------
     IS_GENERATED:
-        needed by storage.view_generator to mark generated views as generated
+        needed by generator.generate_view_class to mark generated views as generated
     DOCUMENT_ROOT:
         Should be the document root of the associated field's storage.
     UPLOAD_TO:
@@ -59,7 +59,7 @@ class BasicFileView(View):
     PROTECTED_URLPATHROOT:
         URL Prefix that points to the same directory as DOCUMENT_ROOT. See
         build_file_response() for more details.
-    REGISTER_IN_GENERAL_MEDIA_PATH:
+    REGISTER_URLPATTERN:
         Whether to include this view in inventory.url_patterns()
     """
 
@@ -73,7 +73,7 @@ class BasicFileView(View):
 
     PROTECTED_URLPATHROOT: str = ""
 
-    REGISTER_IN_GENERAL_MEDIA_PATH: bool = False
+    REGISTER_URLPATTERN: bool = False
 
     @classmethod
     def url_pattern(cls, url_prefix: str) -> URLPattern:
@@ -103,7 +103,8 @@ class BasicFileView(View):
             return None
         return reverse(cls.REVERSE_PATH_NAME, kwargs=cls._get_kwargs_from_path(path))
 
-    def _get_path(self) -> Path:
+    @property
+    def path(self) -> Path:
         """
         Construct the path from kwargs.
 
@@ -123,7 +124,6 @@ class BasicFileView(View):
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
-        self.path = self._get_path()
 
     def check_access(self):
         """
@@ -143,7 +143,7 @@ class BasicFileView(View):
         )
 
 
-class ProtectedFileView(BasicFileView):
+class ProtectedFileView(BaseFileView):
     """
     Using the structure of BasicFileView, this view restricts access to its files.
 
@@ -161,7 +161,7 @@ class ProtectedFileView(BasicFileView):
 
     PROTECTED_URLPATHROOT: str = mediastorage_settings.FILESERVER_MEDIA_URL
 
-    REGISTER_IN_GENERAL_MEDIA_PATH: bool = True
+    REGISTER_URLPATTERN: bool = True
 
     def check_access(self) -> bool:
         """
