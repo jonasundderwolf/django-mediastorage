@@ -4,7 +4,7 @@ from typing import Optional, Union
 
 from rest_framework.permissions import BasePermission
 
-from .files import BasicFileView, ProtectedFileView, RestrictedFileView
+from .files import BaseFileView, ProtectedFileView, RestrictedFileView
 
 
 def cache_generated_view_class(fn: Callable) -> Callable:
@@ -16,7 +16,7 @@ def cache_generated_view_class(fn: Callable) -> Callable:
     storage.inventory.
     """
 
-    def wrapper(other_view: type[BasicFileView], **kwargs):
+    def wrapper(other_view: type[BaseFileView], **kwargs):
         kwargs_cleaned = {k: v for k, v in kwargs.items() if k != "view_name"}
         if (
             other_view is not None
@@ -42,8 +42,8 @@ def generate_view_class(
     document_root: Union[str, Path],
     url_root: str,
     permission_classes: Iterable[type[BasePermission]],
-    register_in_general_media_path: Optional[bool],
-) -> type[BasicFileView]:
+    register_urlpattern: Optional[bool],
+) -> type[BaseFileView]:
     assert upload_to
 
     permission_classes_list = None
@@ -52,7 +52,7 @@ def generate_view_class(
         cls = RestrictedFileView
         permission_classes_list = list(permission_classes)
     elif is_public:
-        cls = BasicFileView
+        cls = BaseFileView
     else:
         cls = ProtectedFileView
 
@@ -62,8 +62,8 @@ def generate_view_class(
         UPLOAD_TO = upload_to
         PROTECTED_URLPATHROOT = url_root
 
-        if register_in_general_media_path is not None:
-            REGISTER_IN_GENERAL_MEDIA_PATH = register_in_general_media_path
+        if register_urlpattern is not None:
+            REGISTER_URLPATTERN = register_urlpattern
 
         if permission_classes_list:
             permission_classes = permission_classes_list

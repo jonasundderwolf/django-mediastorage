@@ -5,7 +5,7 @@ from django.urls import path
 
 from django_mediastorage.fields import ProtectedFileField
 from django_mediastorage.urls import protected_file_path
-from django_mediastorage.views.files import BasicFileView
+from django_mediastorage.views.files import BaseFileView
 from django_mediastorage.views.http_forward_auth import HTTPForwardAuthView
 
 from .utils import group_permission
@@ -36,7 +36,7 @@ def test_http_forward_auth_applying_permisions(
     field_name,
     status_code,
 ):
-    class ForbiddenFileView(BasicFileView):
+    class ForbiddenFileView(BaseFileView):
         # todo: general check in library that all file views have upload_to set in accordance with their respective fields (or other way round)
         UPLOAD_TO = "forbidden_file"  # must match field_name parameter
 

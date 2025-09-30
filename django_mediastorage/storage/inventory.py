@@ -29,7 +29,7 @@ from django.urls import URLPattern
 
 from .. import settings as mediastorage_settings
 from ..constants import ProtectionClass
-from ..views.files import BasicFileView
+from ..views.files import BaseFileView
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ def raise_inventory_error(error_str: str):
         raise ValueError(error_str)
 
 
-def _get_view(view: Union[str, type[BasicFileView]]) -> Optional[type[BasicFileView]]:
+def _get_view(view: Union[str, type[BaseFileView]]) -> Optional[type[BaseFileView]]:
     if isinstance(view, str):
         try:
             module_name, view_name = view.rsplit(".", 1)
@@ -69,7 +69,7 @@ class InventoryRecord:
         protection_class: ProtectionClass,
         model: type[models.Model],
         field_name: str,
-        view_ref: Optional[Union[str, type[BasicFileView]]],
+        view_ref: Optional[Union[str, type[BaseFileView]]],
     ):
         # need to handle empty path separately as it does not cast to None
         # (it's basically '.')
@@ -130,7 +130,7 @@ class InventoryRecord:
         self.model_field_names.update(other.model_field_names)
 
     @property
-    def view(self) -> Optional[type[BasicFileView]]:
+    def view(self) -> Optional[type[BaseFileView]]:
         # it's possible that view_ref stays None even after lazy loading
         # therefore, we'll need to store the information "is initialized" separately
         if self._view_initialized:
@@ -168,7 +168,7 @@ class InventoryRecord:
         url_prefix = url_prefix.strip("/") + "/"
         if view is None:
             return None
-        if not view.REGISTER_IN_GENERAL_MEDIA_PATH:
+        if not view.REGISTER_URLPATTERN:
             return None
         return self.view.url_pattern(url_prefix)
 
@@ -235,7 +235,7 @@ def register_protected_dir(
     protection_class: ProtectionClass,
     model: type[models.Model],
     field_name: str,
-    view_ref: Optional[Union[str, type[BasicFileView]]],
+    view_ref: Optional[Union[str, type[BaseFileView]]],
 ) -> InventoryRecord:
     """
     register a new directory
