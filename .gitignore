@@ -5,3 +5,5 @@
 */__pycache__/*
 *.pyc
 .DS_Store
+/django_mediastorage/_version.py
+/django_mediastorage.egg-info
