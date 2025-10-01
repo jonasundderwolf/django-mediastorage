@@ -95,3 +95,31 @@ exclude = [".venv", "tests/*", "*/tests/*"]
 tag_regex = "^v(?P<version>.*)$"        # 1
 write_to = "django_mediastorage/_version.py"  # 2
 local_scheme = "no-local-version"
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py{312,313}-django{42,50,51,52}-drf{315,316}
+requires = tox-uv
+
+[gh-actions]
+python =
+    3.12: py312
+    3.13: py313
+
+[testenv]
+deps =
+    pytest
+    pytest-django
+    pytest-factoryboy
+
+    django42: Django>=4.2,<4.3
+    django50: Django>=5.0,<5.1
+    django51: Django>=5.1,<5.2
+    django52: Django>=5.2,<5.3
+
+    drf315: djangorestframework>=3.15,<3.16
+    drf316: djangorestframework>=3.16,<3.17
+
+commands = python -m pytest tests
+"""
