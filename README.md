@@ -1,4 +1,8 @@
 # django-mediastorage
+> **ℹ️ Project Status: Alpha**
+>
+> The library is **functionally stable**, but still in **alpha** due to ongoing development.
+> Interfaces may change and not all edge cases are covered yet.
 
 A library that allows to protect media files that are served via nginx or traefik to be authenticated
 
