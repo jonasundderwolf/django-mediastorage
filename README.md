@@ -2,8 +2,6 @@
 
 A library that allows to protect media files that are served via nginx to be authenticated
 
-[[_TOC_]]
-
 ## Overview
 
 It is recommended that in production settings media files are served by a web server
