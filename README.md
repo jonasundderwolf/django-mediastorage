@@ -1,6 +1,6 @@
 # django-mediastorage
 
-A library that allows to protect media files that are served via nginx to be authenticated
+A library that allows to protect media files that are served via nginx or traefik to be authenticated
 
 ## Overview
 
