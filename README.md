@@ -341,7 +341,7 @@ views. If you do so, you'll likely want to pass the view class to a ProtectedFil
 
 All relevant views are defined in `django_mediastorage.views.files`.
 
-As base class, use `BasicFileView` if you want to implement permission settings on your
+As base class, use `BaseFileView` if you want to implement permission settings on your
 own, use `ProtectedFileView` if you want only authorized active users to access the files,
 or `RestrictedFileView` to also apply role restrictions. Note that you can always add more
 specialized authorization code on top of the existing restrictions.
@@ -372,5 +372,5 @@ There are multiple ways to create URL patterns for ProtectedFileFields and their
   ```
 
 - Register your own URLPattern as you like. Make sure the pattern provides the necessary
-  variables needed by `BasicFileView._get_path`. By default, this is the path of
+  variables needed by `BaseFileView._get_path`. By default, this is the path of
   the file relative to the `upload_to` directory.

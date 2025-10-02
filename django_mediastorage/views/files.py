@@ -145,10 +145,10 @@ class BaseFileView(View):
 
 class ProtectedFileView(BaseFileView):
     """
-    Using the structure of BasicFileView, this view restricts access to its files.
+    Using the structure of BaseFileView, this view restricts access to its files.
 
     This class is not intended to be used directly. Subclasses must specify the same
-    things as with BasicFileView.
+    things as with BaseFileView.
 
     By default, all authenticated active users are allowed to view the file.
 
@@ -180,7 +180,7 @@ class RestrictedFileView(ProtectedFileView):
     have the respected access permissions.
 
     This class is not intended to be used directly. Subclasses must specify the same
-    things as with BasicFileView as well as permission_classes
+    things as with BaseFileView as well as permission_classes
 
     Attributes
     ----------
