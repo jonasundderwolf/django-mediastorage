@@ -1,6 +1,6 @@
 [project]
 name = "django-mediastorage"
-description = ""
+description = "A library that allows to protect media files that are served via nginx or traefik to be authenticated"
 authors = [
   { name = "Jonas und der Wolf GmbH", email = "opensource@jonasundderwolf.de" },
   { name = "Alissa Gerhard", email = "alissa.gerhard@jonasundderwolf.de" },
