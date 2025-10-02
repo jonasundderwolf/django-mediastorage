@@ -11,7 +11,7 @@ class HTTPForwardAuthView(View):
     The current request should have gone through all the middlewares that would attach
     information like the current user (based on HTTP headers) and other checks.
 
-    This view uses Django's default URL Resolver to find the BasicFileView for the path
+    This view uses Django's default URL Resolver to find the BaseFileView for the path
     given in the current request's `X-Forwarded-Uri` header.
 
     It'll then set up the view and call `check_access()` on it to check if the current

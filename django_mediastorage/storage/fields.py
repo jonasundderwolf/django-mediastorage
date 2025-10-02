@@ -50,10 +50,10 @@ class ProtectedStorageMixin:
     protection_class:
         ProtectionClass of the files stored in this field
     view:
-        View or import-reference to a BasicFileView associated with this field
+        View or import-reference to a BaseFileView associated with this field
     generate_view:
         Set to True to generate a view. Cannot be used together with 'view'. Will generate
-        BasicFileView, ProtectedFileView, or RestrictedFileView depending on
+        BaseFileView, ProtectedFileView, or RestrictedFileView depending on
         protection_class and restrict_to_roles
     permission_classes:
         Role Restriction to use when generating a view. Cannot be used together with
