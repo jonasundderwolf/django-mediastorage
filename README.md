@@ -1,5 +1,7 @@
 # django-mediastorage
 
+This is a test
+
 A library that allows to protect media files that are served via nginx to be authenticated
 
 [[_TOC_]]
